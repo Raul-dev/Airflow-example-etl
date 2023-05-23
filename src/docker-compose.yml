@@ -1,0 +1,87 @@
+version: '3.4'
+
+x-common:
+  &common
+#  image: apache/airflow:2.3.0
+  build:
+    context: ./images/airflow
+  user: "${AIRFLOW_UID}:0"
+  env_file: 
+    - .env.airflow
+  volumes:
+    - ./images/airflow/dags:/opt/airflow/dags
+    - ./images/airflow/logs:/opt/airflow/logs
+    - ./images/airflow/plugins:/opt/airflow/plugins
+    - /var/run/docker.sock:/var/run/docker.sock
+#    - ./images/airflow/airflow.cfg:/opt/airflow/airflow.cfg    
+
+x-depends-on:
+  &depends-on
+  depends_on:
+    postgresdb:
+      condition: service_healthy
+    airflow-init:
+      condition: service_completed_successfully
+
+services:
+  postgresdb:
+    image: postgres:14
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 10s
+      retries: 120
+    restart: unless-stopped
+    env_file:
+      - .env.airflow
+    ports:
+      - '54321:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql
+  
+  mssql:
+      image: mcr.microsoft.com/mssql/server:latest
+      container_name: docker-mssql
+      environment:
+          - ACCEPT_EULA=Y
+          - SA_PASSWORD=Th1sS3cret!
+          - POSTGRES_DB=airflow
+      ports:
+          - 1433:1433
+
+
+  scheduler:
+    <<: [*common, *depends-on]
+    container_name: airflow-scheduler
+    command: scheduler
+    restart: on-failure
+    ports:
+      - "8793:8793"
+
+  webserver:
+    <<: [*common, *depends-on]
+    container_name: airflow-webserver
+    restart: always
+    command: webserver
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+    volumes:
+      - ./images/airflow/dags/plsql:/usr/local/airflow/sql    
+
+  airflow-init:
+    <<: *common
+    container_name: airflow-init
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        mkdir -p /sources/logs /sources/dags /sources/plugins
+        chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
+        exec /entrypoint airflow version
+volumes:
+  postgres-data:        

@@ -1,0 +1,13 @@
+.vs
+bin
+obj
+logs
+__pycache__
+*.user
+rootCA
+*.crt
+*.key
+*.pfx
+*.csr
+*.jfm
+*.dbmdl
