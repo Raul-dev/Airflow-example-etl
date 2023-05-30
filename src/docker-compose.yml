@@ -4,16 +4,20 @@ x-common:
   &common
 #  image: apache/airflow:2.3.0
   build:
-    context: ./images/airflow
+#    context: ./images/airflow
+    context: .
+    dockerfile: images/airflow/Dockerfile
+
   user: "${AIRFLOW_UID}:0"
   env_file: 
     - .env.airflow
   volumes:
     - ./images/airflow/dags:/opt/airflow/dags
-    - ./images/airflow/logs:/opt/airflow/logs
+    - ./logs:/opt/airflow/logs
     - ./images/airflow/plugins:/opt/airflow/plugins
     - /var/run/docker.sock:/var/run/docker.sock
-#    - ./images/airflow/airflow.cfg:/opt/airflow/airflow.cfg    
+    - ./srv/nginx/certs/host.docker.internal.crt:/srv/https/host.docker.internal.crt
+    - ./srv/nginx/certs/host.docker.internal.key:/srv/https/host.docker.internal.key
 
 x-depends-on:
   &depends-on
@@ -25,7 +29,10 @@ x-depends-on:
 
 services:
   postgresdb:
+#    build:
+#      context: ./images/postgresdb
     image: postgres:14
+#    container_name: postgres
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 5s
@@ -38,7 +45,12 @@ services:
       - '54321:5432'
     volumes:
       - postgres-data:/var/lib/postgresql
-  
+      - ./images/postgresdb/database_user.sql:/docker-entrypoint-initdb.d/database_user.sql
+      - ./images/postgresdb/dwh_tables.sql:/docker-entrypoint-initdb.d/dwh_tables.sql
+      - ./images/postgresdb/populate_tables.sql:/docker-entrypoint-initdb.d/populate_tables.sql      
+      - ./images/postgresdb/northwind_ddl.sql:/docker-entrypoint-initdb.d/northwind01_ddl.sql
+      - ./images/postgresdb/northwind_data_source.sql:/docker-entrypoint-initdb.d/northwind02_data_source.sql
+
   mssql:
       image: mcr.microsoft.com/mssql/server:latest
       container_name: docker-mssql
@@ -65,6 +77,7 @@ services:
     command: webserver
     ports:
       - "8080:8080"
+      - "443:443"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 30s
@@ -83,5 +96,6 @@ services:
         mkdir -p /sources/logs /sources/dags /sources/plugins
         chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
         exec /entrypoint airflow version
+
 volumes:
   postgres-data:        

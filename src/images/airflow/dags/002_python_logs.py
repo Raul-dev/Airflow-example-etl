@@ -13,7 +13,6 @@ dag = DAG(
 )
 
 def loginfo1(logtext,**kwargs):
-#logtext,**kwargs    
     logging.info('DAG loging: %s', logtext)
     pprint(kwargs)
     print(logtext)
