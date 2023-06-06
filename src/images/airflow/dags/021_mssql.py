@@ -22,7 +22,7 @@ dag = DAG(
     default_args=args,
     schedule_interval=None,
     start_date=dt.datetime(2020, 1, 1),
-    tags=["example"],
+    tags=["mssql"],
 )
 
 

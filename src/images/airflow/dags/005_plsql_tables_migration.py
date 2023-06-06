@@ -4,12 +4,39 @@ from airflow.operators.empty import EmptyOperator
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.hooks.postgres_hook import PostgresHook
 dag_params = {
-    'dag_id': '004_plsql_tables_migration',
+    
     'start_date':datetime(2023, 5, 23),
-    'schedule_interval': "@daily"
+    'schedule_interval': None
 }
 
-with DAG(**dag_params) as dag1:
+with DAG(
+    dag_id='005_plsql_tables_migration',
+    default_args=dag_params,
+    tags=["Simple postgres example"],
+) as dag:
+
+    @dag.task(task_id="migration_task")
+    def migration_task():
+        src = PostgresHook(postgres_conn_id='postgres_oltp')
+        dest = PostgresHook(postgres_conn_id='postgres_default')
+        src_conn = src.get_conn()
+        cursor = src_conn.cursor()
+        dest_conn = dest.get_conn()
+        dest_cursor = dest_conn.cursor()
+        dest_cursor.execute("SELECT MAX(product_id) FROM product;")
+        product_id = dest_cursor.fetchone()[0]
+        if product_id is None:
+            product_id = 0
+        cursor.execute("SELECT * FROM product WHERE product_id > %s", [product_id])
+        dest.insert_rows(table="product", rows=cursor)
+
+        dest_cursor.execute("SELECT MAX(customer_id) FROM customer;")
+        order_id = dest_cursor.fetchone()[0]
+        if order_id is None:
+            order_id = 0
+        cursor.execute("SELECT * FROM customer WHERE customer_id > '%s'", [order_id])
+        dest.insert_rows(table="customer", rows=cursor)
+        
     create_table_product = PostgresOperator(
         task_id='create_table_product',
         postgres_conn_id="postgres_default",
@@ -35,26 +62,6 @@ with DAG(**dag_params) as dag1:
             );''',
     )  
 
-with DAG(**dag_params) as dag2:
-    src = PostgresHook(postgres_conn_id='postgres_oltp')
-    dest = PostgresHook(postgres_conn_id='postgres_default')
-    src_conn = src.get_conn()
-    cursor = src_conn.cursor()
-    dest_conn = dest.get_conn()
-    dest_cursor = dest_conn.cursor()
-    dest_cursor.execute("SELECT MAX(product_id) FROM product;")
-    product_id = dest_cursor.fetchone()[0]
-    if product_id is None:
-        product_id = 0
-    cursor.execute("SELECT * FROM product WHERE product_id > %s", [product_id])
-    dest.insert_rows(table="product", rows=cursor)
-
-    dest_cursor.execute("SELECT MAX(customer_id) FROM customer;")
-    order_id = dest_cursor.fetchone()[0]
-    if order_id is None:
-        order_id = 0
-    cursor.execute("SELECT * FROM customer WHERE customer_id > %s", [order_id])
-    dest.insert_rows(table="customer", rows=cursor)
-    
-#    create_table_product>>create_table_customer>>migration_task     
-     
+    (
+        [create_table_product, create_table_customer]>>migration_task()     
+    ) 

@@ -9,7 +9,7 @@ dag = DAG(
     default_args={},
     schedule_interval=None,
     start_date=days_ago(2),
-    tags=["example"],
+    tags=["mssql"],
 )
 
 

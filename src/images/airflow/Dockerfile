@@ -1,5 +1,5 @@
 FROM apache/airflow:2.6.1
-
+EXPOSE 443
 # Use root user for installation
 USER root
 
@@ -20,11 +20,29 @@ RUN ACCEPT_EULA=Y apt-get install mssql-tools -y \
   && echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile \
   && echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 
+RUN mkdir -p /srv/https
+COPY ./srv/nginx/certs/host.docker.internal.crt /srv/https/host.docker.internal.crt
+COPY ./srv/nginx/certs/host.docker.internal.key /srv/https/host.docker.internal.key
+    
+    
+
 USER airflow
 
-RUN pip install pyodbc pymssql==2.1.4 psycopg2-binary
+RUN pip install pyodbc pymssql==2.2.7 psycopg2-binary
 RUN pip install apache-airflow-providers-microsoft-mssql
 RUN pip install -U pytest
+RUN pip install pytest-watcher
+# ml modules
+#RUN pip install matplotlib
+#RUN pip install xgboost
+#RUN pip install tensorflow
+#RUN pip install numpy
+#RUN pip install jupyterlab
+#RUN pip install jupyter
+#RUN pip install papermill
+#RUN pip install torch torchvision torchaudio
+#RUN pip install fastai
+
 # New entrypoint script
 #COPY init_db_and_start.sh /
 #RUN chmod +x /init_db_and_start.sh

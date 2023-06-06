@@ -5,10 +5,11 @@ from airflow.hooks.postgres_hook import PostgresHook
 dag_params = {
     'dag_id': '004_plsql_northwind_migration',
     'start_date':datetime(2021, 8, 24),
-    'schedule_interval': timedelta(seconds=60)
+    'schedule_interval': None,
+    'tags':["Simple postgres example"],
 }
 with DAG(**dag_params) as dag:
-    asdqwe = PostgresHook(postgres_conn_id='postgres_default')
+    
     src = PostgresHook(postgres_conn_id='northwind_source')
     dest = PostgresHook(postgres_conn_id='postgres_default')
     src_conn = src.get_conn()

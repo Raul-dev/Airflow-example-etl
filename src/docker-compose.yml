@@ -4,26 +4,32 @@ x-common:
   &common
 #  image: apache/airflow:2.3.0
   build:
-#    context: ./images/airflow
+
     context: .
     dockerfile: images/airflow/Dockerfile
-
   user: "${AIRFLOW_UID}:0"
   env_file: 
     - .env.airflow
   volumes:
     - ./images/airflow/dags:/opt/airflow/dags
-    - ./logs:/opt/airflow/logs
+    - ./images/airflow/logs:/opt/airflow/logs
     - ./images/airflow/plugins:/opt/airflow/plugins
     - /var/run/docker.sock:/var/run/docker.sock
+# Project and script pathes
+    #ssl
     - ./srv/nginx/certs/host.docker.internal.crt:/srv/https/host.docker.internal.crt
     - ./srv/nginx/certs/host.docker.internal.key:/srv/https/host.docker.internal.key
+    # 012 
+    - ./images/airflow/plsql012:/usr/local/airflow/sql
+    # 041 ml BinhPhan didnot work
+    #- ./ml/BinhPhan/scripts:/usr/local/airflow/scripts
+    #- ./ml/BinhPhan/data:/usr/local/airflow/data    
 
 x-depends-on:
   &depends-on
   depends_on:
-    postgresdb:
-      condition: service_healthy
+#    postgres:
+#      condition: service_healthy
     airflow-init:
       condition: service_completed_successfully
 
@@ -61,7 +67,6 @@ services:
       ports:
           - 1433:1433
 
-
   scheduler:
     <<: [*common, *depends-on]
     container_name: airflow-scheduler
@@ -77,15 +82,12 @@ services:
     command: webserver
     ports:
       - "8080:8080"
-      - "443:443"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 30s
       timeout: 30s
       retries: 5
-    volumes:
-      - ./images/airflow/dags/plsql:/usr/local/airflow/sql    
-
+  
   airflow-init:
     <<: *common
     container_name: airflow-init
@@ -96,6 +98,18 @@ services:
         mkdir -p /sources/logs /sources/dags /sources/plugins
         chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
         exec /entrypoint airflow version
-
+        
+#  nifi:
+#      image: apache/nifi:latest
+#      environment:
+#        - SINGLE_USER_CREDENTIALS_USERNAME=${SINGLE_USER_CREDENTIALS_USERNAME:-admin}
+#        - SINGLE_USER_CREDENTIALS_PASSWORD=${SINGLE_USER_CREDENTIALS_PASSWORD:-admin}
+#      ports:
+#          - 8082:8080
+#          - 8443:8443
+#          - 8001:8000
+#      volumes:
+#          - ./images/nifi/mssql-jdbc-12.2.0.jre8.jar:/lib/jdbc/mssql-jdbc-12.2.0.jre8.jar    
+#          - ./images/nifi/data:/mnt/data                  
 volumes:
   postgres-data:        

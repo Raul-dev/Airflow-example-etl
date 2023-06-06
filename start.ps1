@@ -2,12 +2,10 @@
 Param
 (
 	[parameter(Mandatory=$false)][string]$Mode="up",
-	[parameter(Mandatory=$false)][bool]$ELKenable=$false,
 	[parameter(Mandatory=$false)][bool]$IsSimpleCertificate=$true
 )
 $ExitCode = 0
 Write-Host "Batch mode="$Mode
-Write-Host "ELK enable mode="$ELKenable
 Write-Host "Simple Certificate enable mode="$IsSimpleCertificate
 $Projectpath = Convert-Path .
 
@@ -19,16 +17,15 @@ try{
 		exit -1
 	}
 	Set-Location -Path ./src
-	$ResultSearch = docker ps -a | Select-String -Pattern "mqwebservice"
-	if(-Not [string]::IsNullOrEmpty($ResultSearch)){
-		Write-Host "Stoped container: docker-compose  down"
-		docker-compose down
-#		docker-compose -f docker-compose.elk.yml down
+   
+#	$ResultSearch = docker ps -a | Select-String -Pattern "mqwebservice"
+#	if(-Not [string]::IsNullOrEmpty($ResultSearch)){
+#		Write-Host "Stoped container: docker-compose  down"
+#		docker-compose down
+#	}
 
-	}
     if($Mode -eq "down"){
-#		docker-compose -f docker-compose.misc.yml down
-#		docker-compose -f docker-compose.elk.yml down
+		docker-compose -f docker-compose.yml down
 		Set-Location -Path $Projectpath
 		exit 0
 	}
@@ -109,35 +106,7 @@ try{
 	Write-Host "docker-compose  start"
 #	docker-compose -f docker-compose.misc.yml up -d
 	
-	# Export kibana index patern
-	if($ELKenable -eq $true){
-#		docker-compose -f docker-compose.elk.yml up -d
-		$res = 0
-		$StatusCode = 0
-		Do {
-			#curl -X GET api/task_manager/_health
-			$url="http://127.0.01:5601/api/task_manager/_health"
-			Write-Host "Ineration="$res
-			try{
-				$invres = Invoke-RestMethod $url -ErrorAction SilentlyContinue
-				
-			}catch {
-				Write-Host $_ -fore green
-				Write-Host "StatusCode:" $_.Exception.Response.StatusCode.value__ 
-				Write-Host "StatusDescription:" $_.Exception.Response.StatusDescription
-				$StatusCode = $_.Exception.Response.StatusCode.value__ 
-			}
-			if($StatusCode -eq 500){
-				break
-			}
 
-			$res = $res + 1
-			# Sleep 7 seconds
-			Start-Sleep -s 7
-		}
-		while (($res -le 20) -and ($StatusCode -ne 500))
-		.\srv\kibanaview\CreateIndex.ps1 $Projectpath\src\srv\kibanaview\export.ndjson
-	}
 	docker-compose up 
 	$ExitCode = 0
 }

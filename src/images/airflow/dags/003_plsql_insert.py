@@ -8,7 +8,9 @@ from airflow.operators.postgres_operator import PostgresOperator
 dag_params = {
     'dag_id': '003_plsql_insert',
     'start_date': datetime(2023, 5, 7),
-    'schedule_interval': None
+    'schedule_interval': None,
+    'tags':["Simple postgres example"],
+
 }
 
 

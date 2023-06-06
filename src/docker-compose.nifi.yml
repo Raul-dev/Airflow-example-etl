@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  nifi:
+      image: apache/nifi:latest
+      environment:
+        - SINGLE_USER_CREDENTIALS_USERNAME=${SINGLE_USER_CREDENTIALS_USERNAME:-admin}
+        - SINGLE_USER_CREDENTIALS_PASSWORD=${SINGLE_USER_CREDENTIALS_PASSWORD:-admin}
+      ports:
+          - 8082:8080
+          - 8443:8443
+          - 8001:8000
+      volumes:
+          - ./images/nifi/mssql-jdbc-12.2.0.jre8.jar:/lib/jdbc/mssql-jdbc-12.2.0.jre8.jar    
+          - ./images/nifi/data:/mnt/data    
