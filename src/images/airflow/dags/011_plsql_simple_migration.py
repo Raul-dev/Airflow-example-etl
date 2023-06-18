@@ -10,7 +10,7 @@ dag_params = {
 }
 
 with DAG(
-    dag_id='005_plsql_tables_migration',
+    dag_id='011_plsql_simple_migration',
     default_args=dag_params,
     tags=["Simple postgres example"],
 ) as dag:

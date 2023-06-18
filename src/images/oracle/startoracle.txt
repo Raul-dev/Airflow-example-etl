@@ -1,0 +1,223 @@
+http://donnu.ru/public/facults/kaf/files/%D0%92%D1%81%D0%B5%20%D0%BB%D0%B5%D0%BA%D1%86%D0%B8%D0%B8.pdf
+https://qna.habr.com/q/614383
+
+https://oracleplsql.ru/sequences.html
+
+sqlplus system/password@localhost:1521/XEPDB1 @init.sql
+docker exec -it bash              
+sqlplus system/password@localhost:1521/XEPDB1 AS SYSDBA
+select * from dba_temp_files;
+
+show pdbs
+show CON_NAME
+alter session set container=XEPDB1
+create user dbo
+drop user dbo
+select * from all_users
+create schema dbo AUTHORIZATION dbo
+CREATE SCHEMA AUTHORIZATION dbo
+grant create any table to dbo;
+grant dba to dbo;
+
+CREATE table dbo.table1(
+id integer
+)
+select * from dbo.table1
+SELECT * FROM USER_TABLESPACES;
+SELECT * FROM DBA_TABLESPACES;
+ALTER USER system quota unlimited on USERS;
+ALTER USER dbo quota unlimited on USERS;
+insert into dbo.table1 (id)values (1)
+
+alter user dbo identified by password
+ORA-01045: user DBO lacks CREATE SESSION privilege; logon denied
+grant create session to dbo WITH ADMIN OPTION;
+
+
+#get all tables by user
+
+SELECT * 
+FROM   sys.all_tables 
+ORDER BY TABLE_NAME
+OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;
+
+SELECT
+  table_name, owner
+FROM all_tables
+WHERE owner ='DBO'
+
+select col.owner as schema_name,
+       col.table_name, 
+       col.column_id, 
+       col.column_name, 
+       col.data_type, 
+       col.data_length, 
+       col.data_precision, 
+       col.data_scale, 
+       col.nullable
+from sys.all_tab_columns col
+inner join sys.all_tables t on col.owner = t.owner 
+                              and col.table_name = t.table_name
+-- excluding some Oracle maintained schemas
+where col.owner not in ('APPQOSSYS','AUDSYS','DBSFWUSER','DVSYS','GSMADMIN_INTERNAL','OJVMSYS','ORDDATA','ANONYMOUS','CTXSYS','DBSNMP','EXFSYS', 'LBACSYS', 
+   'MDSYS', 'MGMT_VIEW','OLAPSYS','OWBSYS','ORDPLUGINS', 'ORDSYS','OUTLN', 
+   'SI_INFORMTN_SCHEMA','SYS','SYSMAN','SYSTEM','TSMSYS','WK_TEST','WKSYS', 
+   'WKPROXY','WMSYS','XDB','APEX_040000', 'APEX_PUBLIC_USER','DIP', 
+   'FLOWS_30000','FLOWS_FILES','MDDATA', 'ORACLE_OCM', 'XS$NULL',
+   'SPATIAL_CSW_ADMIN_USR', 'SPATIAL_WFS_ADMIN_USR', 'PUBLIC')  
+order by col.owner, col.table_name, col.column_id;
+
+
+CREATE table dbo.table2(
+
+VARCHAR2
+NVARCHAR2
+CLOB
+LONG
+RAW
+BLOB
+BFILE
+LONG
+NUMBER(n,m)
+FLOAT
+BINARY_FLOAT
+BINARY_DOUBLE
+DATE
+TIMESTAMP
+INTERVAL
+XMLTYPE
+
+CREATE TABLE dbo.Table2 (
+FieldVARCHAR2	VARCHAR2(2000)	,
+FieldNVARCHAR2	NVARCHAR2(2000)	,
+FieldCLOB	CLOB	,
+FieldRAW	RAW	(2000),
+FieldBLOB	BLOB	,
+FieldBFILE	BFILE	,
+FieldLONG	LONG	,
+FieldNUMBER1	NUMBER	,
+FieldNUMBER	NUMBER(36,18)	,
+FieldFLOAT	FLOAT	,
+FieldBINARY_FLOAT	BINARY_FLOAT	,
+FieldBINARY_DOUBLE	BINARY_DOUBLE	,
+FieldDATE	DATE	,
+FieldTIMESTAMP	TIMESTAMP	,
+FieldINTERVAL	INTERVAL YEAR TO MONTH,
+FieldXMLTYPE	XMLTYPE	
+)
+
+
+
+TRUNCATE TABLE dbo.Table2
+INSERT INTO dbo.Table2(FieldVARCHAR2, FieldNVARCHAR2,FieldCLOB)
+VALUES('asd1','фывц1','test1')
+
+INSERT INTO dbo.Table2(FieldVARCHAR2, FieldNVARCHAR2,FieldCLOB,FieldRAW)
+VALUES('asd2','фывц2','test2', HEXTORAW(replace('BBD098BF-58F0-4A84-90C2-F806D6D06061','-','') ) )
+INSERT INTO dbo.Table2(FieldVARCHAR2, FieldNVARCHAR2,FieldCLOB,FieldRAW,FieldBLOB)
+VALUES('asd3','фывц3','test3', HEXTORAW(replace('BBD098BF-58F0-4A84-90C2-F806D6D06061','-','') ), utl_raw.cast_to_raw('some magic here'))
+INSERT INTO dbo.Table2(FieldVARCHAR2, FieldNVARCHAR2,FieldCLOB,FieldRAW,FieldBLOB,FieldBFILE)
+VALUES('asd4','фывц4','test4', HEXTORAW(replace('BBD098BF-58F0-4A84-90C2-F806D6D06061','-','') ), utl_raw.cast_to_raw('some magic here'),BFILENAME('STUFF', 'WD.pdf'))
+INSERT INTO dbo.Table2(FieldVARCHAR2, FieldNVARCHAR2,FieldCLOB,FieldRAW,FieldBLOB,FieldBFILE,FieldLONG)
+VALUES('asd5','фывц5','test5', HEXTORAW(replace('BBD098BF-58F0-4A84-90C2-F806D6D06061','-','') ), utl_raw.cast_to_raw('some magic here'),BFILENAME('STUFF', 'WD.pdf'), 2134444)
+INSERT INTO dbo.Table2(FieldVARCHAR2, FieldNVARCHAR2,FieldCLOB,FieldRAW,FieldBLOB,FieldBFILE,FieldLONG,FieldNUMBER	,FieldFLOAT,FieldBINARY_FLOAT,FieldBINARY_DOUBLE)
+VALUES('asd6','фывц6','test6', HEXTORAW(replace('BBD098BF-58F0-4A84-90C2-F806D6D06061','-','') ), utl_raw.cast_to_raw('some magic here'),BFILENAME('STUFF', 'WD.pdf'), 2134444,1234.123,123123.123123,1234.123,123123.123123)
+SELECT * FROM dbo.Table2
+### проблемы питона
+DPY-3007: database type "DB_TYPE_BFILE" is not supported
+DPY-3007: database type "DB_TYPE_INTERVAL_YM" is not supported
+UPDATE dbo.Table2 SET FieldBFILE = NULL - didnot help
+ALTER TABLE dbo.Table2 DROP COLUMN FieldBFILE;
+ALTER TABLE dbo.Table2 DROP COLUMN FieldINTERVAL;
+psycopg2.ProgrammingError: can't adapt type 'LOB'
+impost psycopg2
+con = connect(...)
+def save(long_blob):
+     cur = con.cursor() 
+     long_data = struct.unpack('<L', long_blob)
+     # grab the first result of the tuple
+     long_data = long_data[0]
+     cur.execute('insert into blob_records( blob_data ) values (%s)', [long_data])
+--
+ALTER TABLE dbo.Table2 DROP COLUMN FieldCLOB;
+ALTER TABLE dbo.Table2 DROP COLUMN FieldRAW;
+ALTER TABLE dbo.Table2 DROP COLUMN FieldBLOB;
+CREATE TABLE IF NOT EXISTS Table2 (
+FieldVARCHAR2	varchar(2000)	,
+FieldNVARCHAR2	varchar(2000)	,
+FieldCLOB	varchar(10),
+FieldRAW	bytea,
+FieldBLOB	bytea	,
+FieldBFILE	bytea	,
+FieldLONG	varchar	,
+FieldNUMBER1	numeric	,
+FieldNUMBER	numeric(36,18)	,
+FieldFLOAT	FLOAT	,
+FieldBINARY_FLOAT	numeric(28,16)	,
+FieldBINARY_DOUBLE	numeric(28,16)	,
+FieldDATE	DATE	,
+FieldTIMESTAMP	TIMESTAMP	,
+FieldINTERVAL	INTERVAL YEAR TO MONTH,
+FieldXMLTYPE	xml	
+)
+
+
+--Oracle
+CREATE TABLE dbo.Table3 (
+FieldVARCHAR2123456789012345678901234567890123456789012345678901234567890	VARCHAR2(2000)	,
+FieldNVARCHAR2123456789012345678901234567890123456789012345678901234567890123456789012345678901234567	NVARCHAR2(2000)	,
+FieldLONG12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890012345678	LONG	,
+FieldNUMBER112345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890012345	NUMBER	,
+FieldNUMBER	NUMBER(36,18)	,
+FieldFLOAT	FLOAT	,
+FieldBINARY_FLOAT	BINARY_FLOAT	,
+FieldBINARY_DOUBLE	BINARY_DOUBLE	,
+FieldDATE	DATE	,
+FieldTIMESTAMP	TIMESTAMP	,
+FieldXMLTYPE	XMLTYPE	
+)
+SELECT RAWTOHEX(HEXTORAW('374a5cfe'))
+--Postgres
+CREATE TABLE dbo.Table3 (
+  FieldVARCHAR21234567890123456_01	VARCHAR(2000)	,
+  FieldNVARCHAR2123456789012345_02	VARCHAR(2000)	,
+  FieldLONG12345678901234567890_03	LONG	,
+  FieldNUMBER112345678901234567_03	NUMBER	,
+  FieldNUMBER	numeric(36,28)	,
+  FieldFLOAT	FLOAT	,
+  FieldBINARY_FLOAT	numeric(28,16)	,
+  FieldBINARY_DOUBLE	numeric(28,16)	,
+  FieldDATE	DATE	,
+  FieldTIMESTAMP	TIMESTAMP	,
+  FieldXMLTYPE	XMLTYPE	
+)
+
+CREATE TABLE dbo.Table4 (
+  FieldVARCHAR2	VARCHAR2(2000)	,
+  FieldNVARCHAR2	NVARCHAR2(2000)	,
+  FieldRAW	RAW	(16),
+  FieldBLOB	BLOB	,
+  FieldLONG	LONG	,
+  FieldNUMBER1	NUMBER	,
+  FieldNUMBER	NUMBER(36,18)	,
+  FieldFLOAT	FLOAT	,
+  FieldBINARY_FLOAT	BINARY_FLOAT	,
+  FieldBINARY_DOUBLE	BINARY_DOUBLE	,
+  FieldDATE	DATE	,
+  FieldTIMESTAMP	TIMESTAMP	,
+  FieldXMLTYPE	XMLTYPE	
+)
+
+
+INSERT INTO dbo.Table4(FieldVARCHAR2, FieldNVARCHAR2)
+VALUES('asd1','фывц1')
+INSERT INTO dbo.Table4(FieldVARCHAR2, FieldNVARCHAR2,FieldRAW)
+VALUES('asd2','фывц2', HEXTORAW(replace('BBD098BF-58F0-4A84-90C2-F806D6D06061','-','') ) )
+INSERT INTO dbo.Table4(FieldVARCHAR2, FieldNVARCHAR2,FieldRAW,FieldBLOB)
+VALUES('asd3','фывц3', HEXTORAW(replace('BBD098BF-58F0-4A84-90C2-F806D6D06061','-','') ), utl_raw.cast_to_raw('some magic here'))
+INSERT INTO dbo.Table4(FieldVARCHAR2, FieldNVARCHAR2,FieldRAW,FieldBLOB)
+VALUES('asd4','фывц4', HEXTORAW(replace('BBD098BF-58F0-4A84-90C2-F806D6D06061','-','') ), utl_raw.cast_to_raw('some magic here2'))
+INSERT INTO dbo.Table4(FieldVARCHAR2, FieldNVARCHAR2,FieldRAW,FieldBLOB,FieldLONG)
+VALUES('asd5','фывц5', HEXTORAW(replace('BBD098BF-58F0-4A84-90C2-F806D6D06061','-','') ), utl_raw.cast_to_raw('some magic here'), 2134444)
+INSERT INTO dbo.Table4(FieldVARCHAR2, FieldNVARCHAR2,FieldRAW,FieldBLOB,FieldLONG,FieldNUMBER	,FieldFLOAT,FieldBINARY_FLOAT,FieldBINARY_DOUBLE)
+VALUES('asd6','фывц6', HEXTORAW(replace('BBD098BF-58F0-4A84-90C2-F806D6D06061','-','') ), utl_raw.cast_to_raw('some magic here'), 2134444,1234567890123456.123,123123.123123,1234.123,123123.123123)

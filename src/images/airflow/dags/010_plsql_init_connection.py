@@ -68,8 +68,8 @@ def initialize_etl_example():
     session.close()
 
 dag = airflow.DAG(
-    dag_id='011_plsql_init_connection',
-    schedule_interval="@once",
+    dag_id='010_plsql_init_connection',
+    schedule_interval=None,  #"@once",
     default_args=args,
     max_active_runs=1,
     tags=["plsql"]

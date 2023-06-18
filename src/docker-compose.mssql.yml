@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: airflow-mssql
+    hostname: docker-mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Th1sS3cret!
+      - POSTGRES_DB=airflow
+    ports:
+      - 1444:1433
+    volumes:
+      - ./images/mssql/restoredb.sql:/var/opt/mybackup/restoredb.sql      
+      - ./images/mssql/init.sh:/var/opt/mybackup/init.sh
+      - ./images/mssql/dbplatform.bak:/var/opt/mybackup/dbplatform.bak      
+  

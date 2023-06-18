@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+   db:
+    environment:
+      - ORACLE_PWD=password
+      - INSTALL_APEX="true" 
+      - SYS_PASSWORD=password
+      - PDB_PASSWORD=password
+      - APEX_EMAIL=me@example.com
+      - APEX_PASSWORD=password      
+    image: container-registry.oracle.com/database/express:latest
+    container_name: airflow-xe21c
+    shm_size: '8gb'
+    ports:
+      - 1521:1521
+    hostname: xedatabase
+#    volumes:
+#      - ./images/oracle/setup-scripts:/opt/oracle/scripts/setup
+#      - ./images/oracle/dump:/opt/oracle/dump    
+    healthcheck:
+      test: [ "CMD", "bash", "-c", "echo 'select 1 from dual;' | ORACLE_HOME=/opt/oracle/product/21c/dbhomeXE /opt/oracle/product/21c/dbhomeXE/bin/sqlplus -s sys/password@xedatabase:1521/XEPDB1 as sysdba" ]
+      interval: 30s
+      retries: 60
+      timeout: 60s
+    deploy:
+      resources:
+         limits:
+           memory: '3G'
+

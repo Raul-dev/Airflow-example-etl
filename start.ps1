@@ -18,20 +18,14 @@ try{
 	}
 	Set-Location -Path ./src
    
-#	$ResultSearch = docker ps -a | Select-String -Pattern "mqwebservice"
-#	if(-Not [string]::IsNullOrEmpty($ResultSearch)){
-#		Write-Host "Stoped container: docker-compose  down"
-#		docker-compose down
-#	}
-
     if($Mode -eq "down"){
 		docker-compose -f docker-compose.yml down
+		docker-compose -f docker-compose.mssql.yml down
+		docker-compose -f docker-compose.oracle.yml down
 		Set-Location -Path $Projectpath
 		exit 0
 	}
 	
-
-
 	#Check docker folder sharing
 	$PostgresFolder = $Projectpath +"\src"
 	$Opts = "-v ${PostgresFolder}:/prj "
@@ -47,7 +41,7 @@ try{
 	}
 	Write-Host "IsFolderSharing="$IsFolderSharing
 	if(-Not $IsFolderSharing){
-		Write-Host "Alpine container haven't access to the solution file Shop Manager.sln. Please check docker folder sharing setup."
+		Write-Host "Alpine container haven't access to the solution folder. Please check docker folder sharing setup."
 		Set-Location -Path $Projectpath
 		exit
 	}
@@ -98,14 +92,17 @@ try{
 	if (Test-Path -Path $LogPath) {
 		Write-Host "Remove old log"
 		Remove-Item -Recurse -Path $LogPath -Force
+		$LogPath=$Projectpath+"/src/images/airflow/logs"
+		Remove-Item -Recurse -Path $LogPath -Force
 	}
 
 	New-Item -ItemType Directory -Force -Path $LogPath
 	$LogPath=$Projectpath+"/src/logs/nginx"
 	New-Item -ItemType Directory -Force -Path $LogPath
 	Write-Host "docker-compose  start"
-#	docker-compose -f docker-compose.misc.yml up -d
 	
+	docker-compose -f docker-compose.mssql.yml up -d
+	docker-compose -f docker-compose.oracle.yml up -d
 
 	docker-compose up 
 	$ExitCode = 0

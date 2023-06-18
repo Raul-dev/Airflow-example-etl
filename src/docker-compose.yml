@@ -28,8 +28,8 @@ x-common:
 x-depends-on:
   &depends-on
   depends_on:
-#    postgres:
-#      condition: service_healthy
+    postgresdb:
+      condition: service_healthy
     airflow-init:
       condition: service_completed_successfully
 
@@ -38,7 +38,8 @@ services:
 #    build:
 #      context: ./images/postgresdb
     image: postgres:14
-#    container_name: postgres
+    container_name: airflow-postgres
+    hostname: postgresdb
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 5s
@@ -57,16 +58,7 @@ services:
       - ./images/postgresdb/northwind_ddl.sql:/docker-entrypoint-initdb.d/northwind01_ddl.sql
       - ./images/postgresdb/northwind_data_source.sql:/docker-entrypoint-initdb.d/northwind02_data_source.sql
 
-  mssql:
-      image: mcr.microsoft.com/mssql/server:latest
-      container_name: docker-mssql
-      environment:
-          - ACCEPT_EULA=Y
-          - SA_PASSWORD=Th1sS3cret!
-          - POSTGRES_DB=airflow
-      ports:
-          - 1433:1433
-
+      
   scheduler:
     <<: [*common, *depends-on]
     container_name: airflow-scheduler
@@ -81,6 +73,7 @@ services:
     restart: always
     command: webserver
     ports:
+      - "443:443"
       - "8080:8080"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
@@ -99,17 +92,6 @@ services:
         chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
         exec /entrypoint airflow version
         
-#  nifi:
-#      image: apache/nifi:latest
-#      environment:
-#        - SINGLE_USER_CREDENTIALS_USERNAME=${SINGLE_USER_CREDENTIALS_USERNAME:-admin}
-#        - SINGLE_USER_CREDENTIALS_PASSWORD=${SINGLE_USER_CREDENTIALS_PASSWORD:-admin}
-#      ports:
-#          - 8082:8080
-#          - 8443:8443
-#          - 8001:8000
-#      volumes:
-#          - ./images/nifi/mssql-jdbc-12.2.0.jre8.jar:/lib/jdbc/mssql-jdbc-12.2.0.jre8.jar    
-#          - ./images/nifi/data:/mnt/data                  
+          
 volumes:
   postgres-data:        
