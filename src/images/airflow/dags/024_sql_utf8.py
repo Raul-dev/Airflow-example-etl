@@ -9,7 +9,7 @@ from airflow.providers.microsoft.mssql.operators.mssql import MsSqlOperator
 
 dag_params = {
     
-    'start_date':datetime(2023, 5, 23),
+    'start_date':datetime(2023, 6, 19),
     'schedule_interval': None
 }
 

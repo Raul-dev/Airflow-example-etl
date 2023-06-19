@@ -15,14 +15,13 @@ cd Airflow-example-etl
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ./start.ps1
 ```
-- Check https://localhost Airflow  (or http://localhost:8080 if SSL disabled)
+- Check https://localhost User: airflow, Password: airflow  (or http://localhost:8080 if SSL disabled)
 - Done! :tada:
 
 ### Run this pipline first:
 - 003_plsql_insert
 - 010_plsql_init_connection
 - 040_oracle_init_connection
-
 ### Prerequisites
 
 - Install [Docker](https://www.docker.com/)

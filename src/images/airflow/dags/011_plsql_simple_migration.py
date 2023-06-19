@@ -3,16 +3,17 @@ from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.hooks.postgres_hook import PostgresHook
-dag_params = {
-    
-    'start_date':datetime(2023, 5, 23),
-    'schedule_interval': None
-}
+#dag_params = {
+#    'start_date':datetime(2023, 5, 23),
+#    'schedule_interval': None
+#}
 
 with DAG(
     dag_id='011_plsql_simple_migration',
-    default_args=dag_params,
+    #default_args=dag_params,
     tags=["Simple postgres example"],
+    start_date=datetime(2022, 5, 28),
+    schedule_interval=None
 ) as dag:
 
     @dag.task(task_id="migration_task")
@@ -34,7 +35,7 @@ with DAG(
         order_id = dest_cursor.fetchone()[0]
         if order_id is None:
             order_id = 0
-        cursor.execute("SELECT * FROM customer WHERE customer_id > '%s'", [order_id])
+        cursor.execute("SELECT * FROM customer WHERE customer_id > %s", [order_id])
         dest.insert_rows(table="customer", rows=cursor)
         
     create_table_product = PostgresOperator(

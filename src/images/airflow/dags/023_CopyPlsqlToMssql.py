@@ -31,7 +31,13 @@ with DAG(
     create_mssql_db = MsSqlOperator(
            task_id="create_mssql_db",
             mssql_conn_id="mssql_default",
-            sql=r"""CREATE DATABASE testdb;""",
+            sql=""";
+            IF DB_ID('testdb') IS NULL
+            BEGIN
+                print 'Создаем базу testdb' 
+                CREATE DATABASE testdb;
+            END
+            """,
             autocommit=True
     )    
     create_mssql_table = MsSqlOperator(
