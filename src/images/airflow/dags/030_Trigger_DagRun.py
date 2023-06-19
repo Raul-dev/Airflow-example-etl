@@ -18,7 +18,7 @@ with DAG(
 
     @dag.task(task_id="Инициализация")
     def initial_task():
-        logging.info("Startintg хочу по русски .")
+        logging.info("Startintg.")
 
     task1 = TriggerDagRunOperator(
         task_id='Run_001_Hello_world',
