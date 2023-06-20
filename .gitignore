@@ -2,6 +2,8 @@
 bin
 obj
 logs
+nifi_registry
+nifi-current
 __pycache__
 *.user
 rootCA

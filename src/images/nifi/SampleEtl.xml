@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<template encoding-version="1.3">
+    <description></description>
+    <groupId>d7bcdac6-0188-1000-e292-e4f1fa1d503e</groupId>
+    <name>SampleEtl</name>
+    <snippet>
+        <processGroups>
+            <id>12fcf648-1457-360a-0000-000000000000</id>
+            <parentGroupId>88774ddf-a798-3a92-0000-000000000000</parentGroupId>
+            <position>
+                <x>0.0</x>
+                <y>0.0</y>
+            </position>
+            <comments></comments>
+            <contents/>
+            <defaultBackPressureDataSizeThreshold>1 GB</defaultBackPressureDataSizeThreshold>
+            <defaultBackPressureObjectThreshold>10000</defaultBackPressureObjectThreshold>
+            <defaultFlowFileExpiration>0 sec</defaultFlowFileExpiration>
+            <flowfileConcurrency>UNBOUNDED</flowfileConcurrency>
+            <flowfileOutboundPolicy>STREAM_WHEN_AVAILABLE</flowfileOutboundPolicy>
+            <name>SampleEtl</name>
+            <variables/>
+        </processGroups>
+    </snippet>
+    <timestamp>06/20/2023 07:40:13 UTC</timestamp>
+</template>

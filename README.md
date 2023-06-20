@@ -15,8 +15,12 @@ cd Airflow-example-etl
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ./start.ps1
 ```
-- Check https://localhost User: airflow, Password: airflow  (or http://localhost:8080 if SSL disabled)
-- Done! :tada:
+- Check Airflow https://localhost User: airflow, Password: airflow  (or http://localhost:8080 if SSL disabled)
+- Run NIFI and go to http://localhost:8082
+```
+docker compose -f docker-compose.nifi.yml up
+```
+- Done! :tada: 
 
 ### Run this pipline first:
 - 003_plsql_insert

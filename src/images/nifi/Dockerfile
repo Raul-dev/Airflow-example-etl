@@ -1,4 +1,4 @@
-FROM apache/nifi
+FROM apache/nifi:1.20.0
 USER root
 RUN mkdir /lib/jdbc
 WORKDIR /lib/jdbc
@@ -8,7 +8,7 @@ RUN cp ./sqljdbc_12.2/enu/mssql-jdbc-12.2.0.jre8.jar ./
 
 USER nifi
 
-COPY flow.xml.gz /opt/nifi/nifi-current/conf/flow.xml.gz
+COPY ./conf/flow.xml.gz /opt/nifi/nifi-current/conf/flow.xml.gz
 
 EXPOSE 8080 8443 10000 8000
 
