@@ -10,6 +10,7 @@ services:
       - APEX_EMAIL=me@example.com
       - APEX_PASSWORD=password      
     image: container-registry.oracle.com/database/express:latest
+#    image: oracleinanutshell/oracle-xe-11g    
     container_name: airflow-xe21c
     shm_size: '8gb'
     ports:

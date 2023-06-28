@@ -1,0 +1,5 @@
+# math3d extension
+comment = '3D mathematics'
+default_version = '1.0'
+module_pathname = '$libdir/math3d'
+relocatable = true

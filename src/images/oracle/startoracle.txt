@@ -11,17 +11,19 @@ select * from dba_temp_files;
 show pdbs
 show CON_NAME
 alter session set container=XEPDB1
-create user dbo
+create user dbo identified by password
 drop user dbo
 select * from all_users
-create schema dbo AUTHORIZATION dbo
-CREATE SCHEMA AUTHORIZATION dbo
 grant create any table to dbo;
 grant dba to dbo;
 
+DROP TABLE dbo.table1
 CREATE table dbo.table1(
-id integer
+id integer,
+name varchar(64),
+t_data timestamp
 )
+
 select * from dbo.table1
 SELECT * FROM USER_TABLESPACES;
 SELECT * FROM DBA_TABLESPACES;
