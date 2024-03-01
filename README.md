@@ -30,7 +30,7 @@ docker compose -f docker-compose.nifi.yml up
 
 - Install [Docker](https://www.docker.com/)
 - Install [Docker Compose](https://docs.docker.com/compose/install/)
-- Install [Win64OpenSSL](https://slproweb.com/download/Win64OpenSSL-3_1_1.msi)
+- Install [Win64OpenSSL](https://slproweb.com/products/Win32OpenSSL.html)
 - Add ENV Variable for running openssl.exe: Path=Path:C:\Program Files\OpenSSL-Win64\bin
 - Install (optional) [Powershell 7.3](https://github.com/PowerShell/PowerShell/releases/download/v7.3.4/PowerShell-7.3.4-win-x64.msi)
 - Following the Airflow 2.6.1 release from [Python Package Index](https://pypi.python.org/pypi/apache-airflow)
